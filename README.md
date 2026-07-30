@@ -23,9 +23,8 @@
 
 ## ✍️ Blog
 
-Velog
-[(링크)](https://velog.io/@jbbdyee)
+Velog [(링크 클릭)](https://velog.io/@jbbdyee)
 
 ## 💻 Main Project
 
-[(링크)](https://github.com/jbbdyee/ai-workspace.git)
+github [(링크 클릭)](https://github.com/jbbdyee/ai-workspace.git)
