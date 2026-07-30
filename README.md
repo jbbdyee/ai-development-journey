@@ -28,4 +28,4 @@ Velog
 
 ## 💻 Main Project
 
-[(추후 추가)](https://github.com/jbbdyee/ai-workspace.git)
+[(링크)](https://github.com/jbbdyee/ai-workspace.git)
