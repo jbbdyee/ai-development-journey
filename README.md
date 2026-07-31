@@ -1,8 +1,8 @@
 # ai-development-journey
 
-개인 프로젝트 파일입니다.
+학습한 기술을 직접 구현하고 기록하며 성장 과정을 남기는 저장소입니다.
 
-> AI 멀티 에이전트 개발자가 되기까지의 학습 과정과 프로젝트를 기록하는 저장소입니다.
+>  Learn → Build → Document → Improve
 
 ## 🎯 목표
 
@@ -13,11 +13,11 @@
 
 ## 📂 Repository Structure
 
-01-first-team-project
+01_first_team_project
 
-02-fastapi-deployment
+02_fastapi_deployment
 
-03-database-flow
+03_database_flow
 
 ...
 
@@ -28,3 +28,8 @@ Velog [(링크 클릭)](https://velog.io/@jbbdyee)
 ## 💻 Main Project
 
 github [(링크 클릭)](https://github.com/jbbdyee/ai-workspace.git)
+
+---
+
+💡 실제 서비스 형태의 개인 프로젝트는 별도의 저장소에서 개발하고,
+이 저장소에는 그 과정에서 학습한 내용과 핵심 구현 예제를 정리합니다.
