@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+students.txt
+student_records.txt
+sample.txt
+
+# VS Code 개인 설정
+.vscode/*
+!.vscode/
+!.vscode/settings.json
+
+# macOS
+.DS_Store
