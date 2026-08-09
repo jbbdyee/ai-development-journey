@@ -1,85 +1,110 @@
-# ai-development-journey
+# AI Development Journey
 
->  Learn → Build → Document → Improve
+AI 개발자가 되기 위해 배우고 있는 기술을  
+직접 이해하고 다시 확인한 예제와 학습 결과물로 정리하는 저장소입니다.
 
-**학습한 기술을 직접 구현하고 기록하며 성장 과정을 남기는 저장소입니다.**
+- 배운 기술이 왜 필요한지 이해하고
+- 핵심 동작을 작은 예제로 다시 확인하며
+- 이후 더 큰 프로젝트에 적용할 수 있도록 정리하는 것
 
----
-
-## 👋 About
-
-AI 멀티 에이전트 개발 과정을 수강하고 있습니다.  
-이 저장소는 단순히 수업 코드를 보관하는 공간이 아니라,
-
-- 기술을 직접 이해하고
-- 작은 예제로 다시 구현하고
-- 블로그로 기록하며
-- 더 나은 구조로 개선하는
-
-과정을 남기기 위해 만들었습니다.
+을 목표로 합니다.
 
 ---
 
-## 🎯 Repository Goal
+## 📚 Topics
 
-이 저장소에서는 다음 네 가지를 목표로 합니다.
+### Backend
 
-- 📚 학습한 기술을 다시 구현하며 이해하기
-- 💡 핵심 개념을 예제와 함께 정리하기
-- ✍️ 블로그와 GitHub를 함께 관리하기
-- 🚀 성장 과정을 지속적으로 기록하기
+- FastAPI
+- REST API
+- Authentication
+- File Upload
+- Deployment
+- Testing
+
+### Frontend
+
+- Streamlit
+- Backend API Integration
+
+### Database
+
+- Supabase
+- CRUD
+- Data Modeling
+
+### AI
+
+- LLM API
+- Multi-turn Conversation
+- Context & Memory
+- RAG
+- AI Agent
+- Multi-Agent
+
+### Realtime
+
+- Redis
+- SSE
+- 실시간 데이터 처리
+
+### Collaboration
+
+- Git / GitHub
+- Team Project
+- Development Planning
+
+### Computer Science
+
+개발 과정에서 새롭게 이해한 컴퓨터 과학 기초 개념을 정리합니다.
 
 ---
 
-## 📂 Repository Structure
+## 🧩 Repository Structure
 
 ```text
-Backend
-Frontend
-Database
-AI
-Collaboration
-Computer-Science
+AI-Development-Journey/
+│
+├── AI/
+├── Backend/
+├── Collaboration/
+├── Computer-Science/
+├── Database/
+├── Frontend/
+└── Realtime/
 ```
 
-각 기술 폴더에는 다음과 같은 구조로 정리합니다.
+각 폴더에는 모든 수업 코드를 저장하지 않습니다.
 
-```text
-📖 Why
-💡 Concept
-💻 Example
-🔍 Applied
-📂 Related Blog
-🚀 Next Step
-🤔 What I Learned
-```
+다시 확인할 가치가 있는 기술은 작은 실행 예제로 정리하고,  
+설계나 협업 관련 내용은 템플릿이나 문서 같은 실제 결과물로 남깁니다.
 
 ---
 
 ## 📝 Velog
 
-학습 과정과 생각은 Velog에 함께 기록하고 있습니다.
+기술을 학습하며 생긴 궁금증과 원리, 트러블슈팅 과정은 Velog에 기록합니다.
 
-🔗 https://velog.io/@jbbdyee
+GitHub에서는 해당 글에서 다룬 기술의 실행 예제나 결과물을 확인할 수 있도록 연결합니다.
 
----
-
-## 🚀 Main Project
-
-현재 학습한 기술을 기반으로
-별도의 개인 프로젝트를 함께 개발하고 있습니다.
-
-🔗 (https://github.com/jbbdyee/ai-workspace.git)
+> Velog: https://velog.io/@jbbdyee
 
 ---
 
-## 🌱 Growth
+## 🚀 Goal
 
-이 저장소는 완성된 결과물을 모아두는 공간이 아닙니다.
+현재는 작은 예제를 이해하고 수정해 보는 단계부터 시작합니다.
 
-새로운 기술을 배우고,
-직접 구현하고,
-다시 개선하는 과정을 계속 기록하며 성장하는 저장소입니다.
+학습이 진행될수록
 
+```text
+작은 예제
+    ↓
+여러 파일이 연결된 예제
+    ↓
+미니 프로젝트
+    ↓
+개인 AI 프로젝트
+```
 
-
+순서로 발전시키며, 단순히 사용해 본 기술보다 **직접 이해하고 설명할 수 있는 기술**을 늘려가는 것을 목표로 합니다.
