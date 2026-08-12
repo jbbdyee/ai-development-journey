@@ -1,23 +1,52 @@
-.venv/
+# ===========================
+# macOS
+# ===========================
+.DS_Store
+
+# ===========================
+# Windows
+# ===========================
+Thumbs.db
+Desktop.ini
+
+# ===========================
+# Python
+# ===========================
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
-.Python
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# ===========================
+# VSCode
+# ===========================
+.vscode/
+
+# ===========================
+# Environment Variables
+# ===========================
 .env
-.env.*
-!.env.example
+
+# ===========================
+# Test / Cache
+# ===========================
 .pytest_cache/
-.ruff_cache/
-.mypy_cache/
-students.txt
-student_records.txt
-sample.txt
+.coverage
+htmlcov/
 
-# VS Code 개인 설정
-.vscode/*
-!.vscode/
-!.vscode/settings.json
+# ===========================
+# Logs
+# ===========================
+*.log
 
-# macOS
-.DS_Store
+# ===========================
+# Jupyter
+# ===========================
+.ipynb_checkpoints/
+
+uploads/
