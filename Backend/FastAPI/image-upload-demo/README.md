@@ -40,3 +40,9 @@ Swagger http://127.0.0.1:8000/docs
 - 반환된 URL로 이미지 조회 성공
 
 ![이미지 조회 결과](./result.png)
+
+## 📝 Related Blog
+
+이 예제를 만들게 된 실제 학습 과정과 트러블슈팅은 아래 글에 정리했습니다.
+
+👉 [DB에 이미지 경로가 있는데 왜 화면에는 이미지가 보이지 않을까?](https://velog.io/@jbbdyee/Troubleshooting-DB%EC%97%90-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EA%B2%BD%EB%A1%9C%EA%B0%80-%EC%9E%88%EB%8A%94%EB%8D%B0-%EC%99%9C-%ED%99%94%EB%A9%B4%EC%97%90%EB%8A%94-%EC%9D%B4%EB%AF%B8%EC%A7%80%EA%B0%80-%EB%B3%B4%EC%9D%B4%EC%A7%80-%EC%95%8A%EC%9D%84%EA%B9%8C)
