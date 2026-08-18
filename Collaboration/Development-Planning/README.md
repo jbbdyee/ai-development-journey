@@ -6,6 +6,13 @@
 
 - [소규모 팀 프로젝트 개발 계획서](./PLAN_TEMPLATE.md)
 
+## 🚀 실제 적용
+
+범용 Plan Template을 이후 4인 항공권 예약 팀 프로젝트의 초기 설계에 실제로 적용했습니다.
+
+- [항공권 실시간 예매 시스템 - Team Project](../Team-Project)
+- [Team Project | 두 번째 팀 프로젝트가 덜 어려웠던 이유](https://velog.io/@jbbdyee/%ED%8C%80-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EA%B0%80-%EB%91%90-%EB%B2%88%EC%A7%B8%EC%97%94-%EB%8D%9C-%EC%96%B4%EB%A0%A4%EC%9B%A0%EB%8D%98-%EC%9D%B4%EC%9C%A0)
+
 ## 🔗 Related Blog
 
 - [첫 팀 프로젝트 | 팀장을 맡으며 배운 초기 설계와 협업 기준의 중요성](https://velog.io/@jbbdyee/%EC%B2%AB-%ED%8C%80-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%8C%80%EC%9E%A5%EC%9D%84-%EB%A7%A1%EC%9C%BC%EB%A9%B0-%EB%B0%B0%EC%9A%B4-%EC%B4%88%EA%B8%B0-%EC%84%A4%EA%B3%84%EC%99%80-%ED%98%91%EC%97%85-%EA%B8%B0%EC%A4%80%EC%9D%98-%EC%A4%91%EC%9A%94%EC%84%B1)
