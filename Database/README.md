@@ -5,11 +5,12 @@
 ## 📚 현재 학습 내용
 
 - [Supabase](./Supabase)
+- PostgreSQL
+  - [잘 쓰던 Supabase를 왜 PostgreSQL로 바꿨을까?](https://velog.io/@jbbdyee/DB-%EC%9E%98-%EC%93%B0%EB%8D%98-Supabase%EB%A5%BC-%EC%99%9C-PostgreSQL%EB%A1%9C-%EB%B0%94%EA%BF%A8%EC%9D%84%EA%B9%8C)
 
 ## 📝 앞으로 정리할 내용
 
 - SQL
-- PostgreSQL
 - Redis
 
 ## 🎯 목표
