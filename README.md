@@ -42,17 +42,15 @@ AI 개발자가 되기 위해 배우고 있는 기술을
 - AI Agent
 - Multi-Agent
 
-### Realtime
-
-- Redis
-- SSE
-- 실시간 데이터 처리
-
 ### Collaboration
 
 - Git / GitHub
 - Team Project
 - Development Planning
+
+### Computer Vision
+
+- **OpenCV** — 개인 프로젝트의 이미지·영상 처리 기능 구현을 위한 기초 학습
 
 ### Computer Science
 
