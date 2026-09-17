@@ -43,7 +43,7 @@ sudo docker compose --env-file env/.env.release -f compose.release.yml ps
 
 ### EC2 수동 배포 중 Docker Compose가 실행되지 않은 두 가지 원인
 
-> TODO: Velog 글 발행 후 정확한 URL 연결
+[블로그 링크](https://velog.io/@jbbdyee/Troubleshooting-AWS-EC2-%EC%88%98%EB%8F%99-%EB%B0%B0%ED%8F%AC-%EC%A4%91-Docker-Compose%EA%B0%80-%EC%8B%A4%ED%96%89%EB%90%98%EC%A7%80-%EC%95%8A%EC%9D%80-%EB%91%90-%EA%B0%80%EC%A7%80-%EC%9B%90%EC%9D%B8)
 
 1. Windows PowerShell에서 쓰던 `.\compose.release.yml` 경로를 Ubuntu에서 그대로 사용해 `no such file or directory`가 발생했다.
 2. Linux 경로로 고친 뒤에는 `/var/run/docker.sock permission denied` 오류가 나타났다.
