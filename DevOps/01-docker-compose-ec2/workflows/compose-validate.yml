@@ -1,0 +1,29 @@
+name: Validate Docker Compose examples
+
+on:
+  push:
+    paths:
+      - "DevOps/01-docker-compose-ec2/**"
+  pull_request:
+    paths:
+      - "DevOps/01-docker-compose-ec2/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: DevOps/01-docker-compose-ec2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate local Compose
+        run: docker compose --env-file env/.env.release.example -f compose.yml config --quiet
+
+      - name: Validate release Compose
+        run: docker compose --env-file env/.env.release.example -f compose.release.yml config --quiet

@@ -56,6 +56,14 @@ AI 개발자가 되기 위해 배우고 있는 기술을
 
 개발 과정에서 새롭게 이해한 컴퓨터 과학 기초 개념을 정리합니다.
 
+### DevOps
+
+- Docker
+- Docker Compose
+- AWS EC2
+- Deployment
+- CI
+
 ---
 
 ## 🧩 Repository Structure
@@ -68,6 +76,7 @@ AI-Development-Journey/
 ├── Collaboration/
 ├── Computer-Science/
 ├── Database/
+├── DevOps/
 ├── Frontend/
 └── Realtime/
 ```
