@@ -1,0 +1,923 @@
+{
+  "name": "68 Assistant router (my · Lab 02 example 2)",
+  "nodes": [
+    {
+      "name": "Guide title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        -180
+      ],
+      "parameters": {
+        "content": "# 68 · 사내 업무 도우미 라우터\n요청 검사 → 업무 나누기 → 담당 Agent → 결과 통합",
+        "height": 150,
+        "width": 3500,
+        "color": "#F4F5F9"
+      }
+    },
+    {
+      "name": "Guide input",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        250
+      ],
+      "parameters": {
+        "content": "## 📥 입력 검사\nPOST /my-assistant · message가 비면 400",
+        "height": 560,
+        "width": 500,
+        "color": "#E8F1FF"
+      }
+    },
+    {
+      "name": "Guide split",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        490,
+        250
+      ],
+      "parameters": {
+        "content": "## 🧠 업무 나누기\nOpenAI가 it · meeting · other 분류. JSON은 Code에서 검증",
+        "height": 520,
+        "width": 590,
+        "color": "#EEE9FF"
+      }
+    },
+    {
+      "name": "Guide route",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        250
+      ],
+      "parameters": {
+        "content": "## 🧭 업무별 분배\n업무 하나당 항목 하나 · index는 요청 순서대로 1부터",
+        "height": 540,
+        "width": 480,
+        "color": "#FFF3D9"
+      }
+    },
+    {
+      "name": "Guide IT",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1630,
+        45
+      ],
+      "parameters": {
+        "content": "## 🖨️ IT 문의 Agent\nquestion = 분리한 업무 text · user = 웹훅 body.user",
+        "height": 270,
+        "width": 570,
+        "color": "#E6F7F4"
+      }
+    },
+    {
+      "name": "Guide meeting",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1630,
+        340
+      ],
+      "parameters": {
+        "content": "## 📝 회의록 Agent\nnotes가 없으면 입력 요청 · 있으면 원본 title · notes 전달",
+        "height": 400,
+        "width": 560,
+        "color": "#F2EAFB"
+      }
+    },
+    {
+      "name": "Guide other",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1630,
+        780
+      ],
+      "parameters": {
+        "content": "## 🙋 담당자 연결\nAgent 호출 없이 같은 결과 형식으로 작성",
+        "height": 250,
+        "width": 570,
+        "color": "#FFF0E8"
+      }
+    },
+    {
+      "name": "Guide collect",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2210,
+        260
+      ],
+      "parameters": {
+        "content": "## 📦 결과 합치기\nMerge 입력 0/1/2 → Aggregate → index 정렬 · 업무별 한 줄",
+        "height": 520,
+        "width": 830,
+        "color": "#E9F6E9"
+      }
+    },
+    {
+      "name": "Guide response",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3110,
+        310
+      ],
+      "parameters": {
+        "content": "## 📤 응답\ncount · results · reply",
+        "height": 410,
+        "width": 280,
+        "color": "#FCECF2"
+      }
+    },
+    {
+      "name": "Assistant webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        390
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        390
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ String($json.body?.message ?? '').trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        650
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"message is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Split tasks",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        560,
+        390
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Assistant webhook').first().json.body.message }}",
+        "options": {
+          "systemMessage": "Split the employee's Korean message into tasks. One task is one action a person can handle at once. Split at connectors such as 그리고, 또, and ~고 when they join different actions; keep fragments together when they describe the same action. Preserve the order in the message. Use exactly these types: it = IT problems or IT request status, such as T-1002 status, a forgotten password, printer failure, or a full mailbox; meeting = summarizing meeting notes or extracting action items; other = requests neither IT nor meeting, such as recommending a dinner venue. Preserve identifiers such as T-1002 and all details needed to understand each task. Do not invent details from fields outside the message. Return only a JSON object with this shape, without markdown or explanation: {\"tasks\":[{\"type\":\"it\",\"text\":\"T-1002 처리 상태 알려줘\"}]}. Each task must have only a valid type and nonempty Korean text.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        610
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      }
+    },
+    {
+      "name": "Parse tasks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        840,
+        390
+      ],
+      "parameters": {
+        "jsCode": "// Accept a JSON object, optionally wrapped in a code fence or surrounding prose.\nconst raw = String($json.output ?? '').trim();\nlet cleaned = raw.replace(/^```(?:json)?\\s*/i, '').replace(/\\s*```$/i, '').trim();\nconst start = cleaned.indexOf('{');\nconst end = cleaned.lastIndexOf('}');\nif (start >= 0 && end > start) cleaned = cleaned.slice(start, end + 1);\nlet tasks = [];\ntry {\n  const data = JSON.parse(cleaned);\n  if (data && !Array.isArray(data) && Array.isArray(data.tasks) && data.tasks.every(task => task && ['it', 'meeting', 'other'].includes(task.type) && typeof task.text === 'string' && task.text.trim())) {\n    tasks = data.tasks.map(task => ({ type: task.type, text: task.text.trim() }));\n  }\n} catch (error) {\n  // Malformed model output returns an empty task list.\n}\nconst body = $('Assistant webhook').first().json.body ?? {};\nconst hasValue = value => typeof value === 'string' && value.trim().length > 0;\nconst agents = { it: 'it-agent', meeting: 'meeting-agent', other: '담당자 연결' };\ntasks = tasks.map(task => {\n  const missing = [];\n  if (task.type === 'it' && !hasValue(body.user)) missing.push('user');\n  if (task.type === 'meeting' && !hasValue(body.notes)) missing.push('notes');\n  return { ...task, agent: agents[task.type], missing };\n});\nreturn [{ json: { count: tasks.length, tasks } }];"
+      }
+    },
+    {
+      "name": "One item per task",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1150,
+        390
+      ],
+      "parameters": {
+        "jsCode": "// One item per task, numbered in the order of the message.\nreturn $json.tasks.map((task, index) => ({ json: { index: index + 1, ...task } }));"
+      }
+    },
+    {
+      "name": "Route by type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1400,
+        390
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "r-it",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "it",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "it"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "r-meeting",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "meeting",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "meeting"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "r-other",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "other",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "other"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Call IT agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1690,
+        160
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/it-agent",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ question: $json.text, user: $('Assistant webhook').first().json.body.user }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Call meeting agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1770,
+        390
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/meeting-agent",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ title: $('Assistant webhook').first().json.body.title, notes: $('Assistant webhook').first().json.body.notes }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "IT result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1930,
+        160
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "index",
+              "value": "={{ $('Route by type').item.json.index }}",
+              "type": "number"
+            },
+            {
+              "id": "a1",
+              "name": "type",
+              "value": "={{ $('Route by type').item.json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "text",
+              "value": "={{ $('Route by type').item.json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "agent",
+              "value": "it-agent",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "route",
+              "value": "={{ $json.route || '오류' }}",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "answer",
+              "value": "={{ $json.answer || $json.error || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Meeting result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2000,
+        390
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "index",
+              "value": "={{ $('Route by type').item.json.index }}",
+              "type": "number"
+            },
+            {
+              "id": "a1",
+              "name": "type",
+              "value": "={{ $('Route by type').item.json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "text",
+              "value": "={{ $('Route by type').item.json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "agent",
+              "value": "meeting-agent",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "route",
+              "value": "={{ $json.route || '오류' }}",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "answer",
+              "value": "={{ $json.summary ? $json.summary + ' 할 일: ' + ($json.actions ?? []).map(a => a.owner + ' - ' + a.task + ' (' + a.due + ')').join('; ') : ($json.error ?? '') }}",
+              "type": "string"
+            },
+            {
+              "id": "a6",
+              "name": "actions",
+              "value": "={{ $json.actions ?? [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Other result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1920,
+        850
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "index",
+              "value": "={{ $('Route by type').item.json.index }}",
+              "type": "number"
+            },
+            {
+              "id": "a1",
+              "name": "type",
+              "value": "={{ $('Route by type').item.json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "text",
+              "value": "={{ $('Route by type').item.json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "agent",
+              "value": "담당자 연결",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "route",
+              "value": "담당자 연결",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "answer",
+              "value": "IT 문의와 회의록 정리 말고는 도와드릴 수 없어 담당자에게 전달했습니다.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Collect results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2250,
+        430
+      ],
+      "parameters": {
+        "numberInputs": 3
+      }
+    },
+    {
+      "name": "All results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2510,
+        430
+      ],
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "results",
+        "options": {}
+      }
+    },
+    {
+      "name": "Build reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2770,
+        430
+      ],
+      "parameters": {
+        "jsCode": "// Combine the task results into one line per task, in the order of the message.\nconst results = ($json.results ?? []).sort((a, b) => a.index - b.index);\nconst lines = results.map(r => `${r.index}. ${r.text} → [${r.route}] ${r.answer}`);\nreturn [{ json: { count: results.length, results, reply: lines.join('\\n') } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3180,
+        430
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has meeting notes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1570,
+        430
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "meeting-notes",
+              "leftValue": "={{ !($json.missing ?? []).includes('notes') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Meeting input needed",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1780,
+        630
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "m0",
+              "name": "index",
+              "value": "={{ $json.index }}",
+              "type": "number"
+            },
+            {
+              "id": "m1",
+              "name": "type",
+              "value": "={{ $json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "m2",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "m3",
+              "name": "agent",
+              "value": "meeting-agent",
+              "type": "string"
+            },
+            {
+              "id": "m4",
+              "name": "route",
+              "value": "입력 필요",
+              "type": "string"
+            },
+            {
+              "id": "m5",
+              "name": "answer",
+              "value": "회의록 원문을 보내 주세요.",
+              "type": "string"
+            },
+            {
+              "id": "m6",
+              "name": "actions",
+              "value": "={{ [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Assistant webhook": {
+      "main": [
+        [
+          {
+            "node": "Has message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has message?": {
+      "main": [
+        [
+          {
+            "node": "Split tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Split tasks",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split tasks": {
+      "main": [
+        [
+          {
+            "node": "Parse tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse tasks": {
+      "main": [
+        [
+          {
+            "node": "One item per task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per task": {
+      "main": [
+        [
+          {
+            "node": "Route by type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by type": {
+      "main": [
+        [
+          {
+            "node": "Call IT agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Has meeting notes?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Other result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call IT agent": {
+      "main": [
+        [
+          {
+            "node": "IT result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call meeting agent": {
+      "main": [
+        [
+          {
+            "node": "Meeting result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT result": {
+      "main": [
+        [
+          {
+            "node": "Collect results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting result": {
+      "main": [
+        [
+          {
+            "node": "Collect results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Other result": {
+      "main": [
+        [
+          {
+            "node": "Collect results",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Collect results": {
+      "main": [
+        [
+          {
+            "node": "All results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All results": {
+      "main": [
+        [
+          {
+            "node": "Build reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build reply": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has meeting notes?": {
+      "main": [
+        [
+          {
+            "node": "Call meeting agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Meeting input needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting input needed": {
+      "main": [
+        [
+          {
+            "node": "Collect results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

@@ -1,0 +1,196 @@
+{
+  "name": "68 Meeting agent (from day 66)",
+  "nodes": [
+    {
+      "name": "Meeting webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "meeting-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has notes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.notes }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        480
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"notes are required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Meeting notes agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        440,
+        200
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=회의 제목: {{ $('Meeting webhook').first().json.body.title || '회의' }}\n회의록:\n{{ $('Meeting webhook').first().json.body.notes }}",
+        "options": {
+          "systemMessage": "You read Korean meeting notes and list the action items. Return only JSON, no code fence: {\"summary\": \"one Korean sentence\", \"actions\": [{\"owner\": \"name or 미정\", \"task\": \"Korean task\", \"due\": \"due date as written or 미정\"}]}. Use only what the notes say. An item without a person in charge has owner \"미정\". Do not invent owners or dates.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        420
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      }
+    },
+    {
+      "name": "Build report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        200
+      ],
+      "parameters": {
+        "jsCode": "// Turn the agent text into the meeting agent contract.\nconst raw = String($json.output ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet data = {};\ntry { data = JSON.parse(raw); } catch (error) { data = {}; }\nconst actions = (Array.isArray(data.actions) ? data.actions : [])\n  .map(item => ({ owner: String(item.owner || '미정'), task: String(item.task || '').trim(), due: String(item.due || '미정') }))\n  .filter(item => item.task);\nconst title = String($('Meeting webhook').first().json.body.title ?? '').trim() || '회의';\nreturn [{ json: { route: actions.length ? '자동 답변' : '담당자 연결', title, count: actions.length,\n  summary: String(data.summary ?? ''), actions } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        200
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Meeting webhook": {
+      "main": [
+        [
+          {
+            "node": "Has notes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has notes?": {
+      "main": [
+        [
+          {
+            "node": "Meeting notes agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Meeting notes agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting notes agent": {
+      "main": [
+        [
+          {
+            "node": "Build report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build report": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

@@ -41,6 +41,8 @@ env/
 # Test / Cache
 # ===========================
 .pytest_cache/
+.tflow-cache/
+.tflow-validation/
 .coverage
 htmlcov/
 

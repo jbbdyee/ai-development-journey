@@ -7,6 +7,9 @@ AI 기술을 학습하며 이해한 개념과 직접 구현한 예제를 정리�
 - Memory
   - [Multi-turn Conversation](https://github.com/jbbdyee/ai-development-journey/tree/main/AI/Memory/multi-turn-demo)
 
+- Workflow
+  - [tflow: n8n 워크플로우를 터미널에서 탐색](Workflow/tflow/README.md)
+
 - AI Agent
   - [LLM한테 그냥 물어보면 되는데, 왜 Tool과 Agent가 필요할까?](https://velog.io/@jbbdyee/AI-Agent-LLM%ED%95%9C%ED%85%8C-%EA%B7%B8%EB%83%A5-%EB%AC%BC%EC%96%B4%EB%B3%B4%EB%A9%B4-%EB%90%98%EB%8A%94%EB%8D%B0-%EC%99%9C-Tool%EA%B3%BC-Agent%EA%B0%80-%ED%95%84%EC%9A%94%ED%95%A0%EA%B9%8C)
   - [사용자가 정보를 다 안 줬는데, Agent는 어떻게 Tool을 실행할까?](https://velog.io/@jbbdyee/AI-Agent-%EC%82%AC%EC%9A%A9%EC%9E%90%EA%B0%80-%EC%A0%95%EB%B3%B4%EB%A5%BC-%EB%8B%A4-%EC%95%88-%EC%A4%AC%EB%8A%94%EB%8D%B0-Agent%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-Tool%EC%9D%84-%EC%8B%A4%ED%96%89%ED%95%A0%EA%B9%8C)

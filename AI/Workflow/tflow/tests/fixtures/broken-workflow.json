@@ -1,0 +1,11 @@
+{
+  "name": "Broken workflow",
+  "nodes": [
+    {"name": "Start", "type": "n8n-nodes-base.webhook", "parameters": {"httpMethod": "POST", "path": "broken"}},
+    {"name": "Finish", "type": "n8n-nodes-base.respondToWebhook", "parameters": {}},
+    {"name": "Unused", "type": "n8n-nodes-base.code", "parameters": {"jsCode": "return [];"}}
+  ],
+  "connections": {
+    "Start": {"main": [[{"node": "Finsh", "type": "main", "index": 0}]]}
+  }
+}
