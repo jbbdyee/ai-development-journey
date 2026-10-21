@@ -10,10 +10,13 @@ Python 3.11 이상과 [uv](https://docs.astral.sh/uv/)가 필요합니다.
 cd AI/Workflow/tflow
 uv sync --group dev
 uv run tflow tests/fixtures/assistant.json
+uv run tflow
 uv run tflow tests/fixtures/it-agent.json --tree
 uv run tflow tests/fixtures/it-agent.json --md
 uv run pytest -q
 ```
+
+파일 경로를 생략하면 JSON 파일 선택 화면이 열립니다. 홈 폴더 아래에서 파일을 탐색하거나 절대·상대 경로를 입력하고 Enter를 누르세요. Tab으로 입력창과 목록 사이를 이동하고 Esc로 취소할 수 있습니다. 파일 선택 화면에는 대화형 터미널이 필요합니다.
 
 터미널 화면에서는 `1`로 TREE, `2`로 FLOW를 전환합니다. 방향키로 이동하고 Enter로 상세 정보를 엽니다. `e`는 Agent 지시문 언어, `v`는 긴 지시문, `w`는 경고를 전환합니다. `m`은 Mermaid 파일을 저장하고 `q`는 종료합니다. 비대화형 출력에는 텍스트 트리가 표시되며 `--text`로 명시할 수 있습니다.
 
