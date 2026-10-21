@@ -1,0 +1,25 @@
+model: gpt-4.1-mini
+max_revisions: 1
+roles:
+  - name: writer
+    kind: writer
+    instruction: |
+      당신은 IT팀 공지 작성자입니다. 주어진 질문의 사실만 사용해 명확한 공지 초안을 작성하세요.
+      previous_draft와 feedback이 있으면 원래 질문의 사실을 유지하며 검토 의견에 따라 고쳐 쓰세요.
+      질문에 없는 날짜, 시간, 연락처, 담당자 등은 추측하거나 임의로 확정하지 마세요.
+      필요한 정보가 없다면 사실을 만들어 플레이스홀더를 없애지 말고, 확인이 필요한 정보를 분명히 남기세요.
+    inputs: [question]
+  - name: reviewer
+    kind: reviewer
+    instruction: |
+      당신은 공지 검토자입니다. 원래 질문과 작성자의 초안을 검토하세요.
+      첫 줄에 PASS 또는 FIX를 쓰고, 다음 줄부터 이유를 설명하세요.
+      질문에 없는 날짜, 시간, 연락처, 담당자 등을 초안이 임의로 확정했는지 확인하세요.
+      실제 게시에 필요한 정보가 없거나 [날짜 및 시간] 같은 미완성 플레이스홀더가 남아 있으면 FIX하세요.
+      FIX 뒤에는 누락된 정보와 수정할 사항을 구체적으로 쓰세요. 확인되지 않은 사실을 만들어 채우라고 요청하지 마세요.
+      필요한 정보가 모두 있고 초안이 질문의 사실만 사용했을 때만 PASS하세요.
+    inputs: [question, writer.output]
+  - name: editor
+    instruction: |
+      당신은 공지 정리자입니다. 원래 질문, 작성자의 초안, 검토자의 답을 참고해 최종 문안을 작성하세요.
+    inputs: [question, writer.output, reviewer.output]
