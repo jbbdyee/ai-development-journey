@@ -1,0 +1,8 @@
+.venv/
+.uv-cache/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+before.json
+after.json
+*.jsonl
