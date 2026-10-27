@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tscan"
+version = "0.1.0"
+description = "A terminal secret and PII scanner for git repositories and directories"
+requires-python = ">=3.11"
+dependencies = [
+    "textual>=0.80,<8",
+]
+
+[project.scripts]
+tscan = "tscan.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8,<10",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tscan"]
