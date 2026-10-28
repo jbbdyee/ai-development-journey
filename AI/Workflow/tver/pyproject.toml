@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tver"
+version = "0.1.0"
+description = "Semantic versioning and diff for n8n workflow JSON"
+requires-python = ">=3.11"
+dependencies = ["rich>=13,<15", "textual>=0.80,<8"]
+
+[project.scripts]
+tver = "tver.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tver"]

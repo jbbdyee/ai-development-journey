@@ -1,0 +1,289 @@
+{
+  "updatedAt": "2026-10-28T09:00:00.000Z",
+  "versionId": "48a92076-f8c0-52fc-8a3a-339fadf9a1e0",
+  "id": "MovedWorkflow0001",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "connections": {
+    "Build result": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "type": "main",
+            "node": "Send result"
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "type": "main",
+            "node": "Build result"
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "type": "ai_languageModel",
+            "node": "Answer"
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "type": "main",
+            "node": "Answer"
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "type": "main",
+            "node": "Get ticket"
+          }
+        ]
+      ]
+    },
+    "Has question?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "type": "main",
+            "node": "Search FAQ"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "type": "main",
+            "node": "Reject empty"
+          }
+        ]
+      ]
+    },
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "type": "main",
+            "node": "Has question?"
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "8e63b3f0-ac49-5d0a-8b75-74abd922c321",
+      "position": [
+        1720,
+        -660
+      ],
+      "parameters": {
+        "options": {},
+        "responseBody": "={{ $json }}",
+        "respondWith": "json"
+      },
+      "typeVersion": 1.1,
+      "type": "n8n-nodes-base.respondToWebhook",
+      "name": "Send result"
+    },
+    {
+      "id": "f8871865-4d45-5682-bb17-d7fe696ea06b",
+      "position": [
+        1500,
+        -540
+      ],
+      "parameters": {
+        "jsCode": "const results = $('Search FAQ').first().json.results ?? [];\nconst result = { route: '자동 답변', answer: String($json.output ?? '').trim(), sources: results.map((r) => r.id) };\nreturn [{ json: result }];"
+      },
+      "typeVersion": 2,
+      "type": "n8n-nodes-base.code",
+      "name": "Build result"
+    },
+    {
+      "id": "3d51d1d3-3262-5685-a9d1-1b1dbf96022e",
+      "position": [
+        1280,
+        -200
+      ],
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI (.env)",
+          "id": "openAiCourse0001"
+        }
+      },
+      "parameters": {
+        "options": {
+          "temperature": 0
+        },
+        "model": {
+          "value": "gpt-4.1-mini",
+          "mode": "id",
+          "__rl": true
+        }
+      },
+      "typeVersion": 1.2,
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "name": "Answer model"
+    },
+    {
+      "id": "7eb3d697-d510-591d-875d-7cbcb3ce8ad5",
+      "position": [
+        1280,
+        -300
+      ],
+      "parameters": {
+        "options": {
+          "maxIterations": 1,
+          "systemMessage": "You are the company IT help desk. Answer in Korean in at most 3 sentences, using only the FAQ entries and the ticket record given. Never invent steps, dates or names. For a ticket, say its status and note. If the data does not answer the question, say \"찾지 못했습니다\" and that a staff member will help. Use 합니다체."
+        },
+        "text": "=질문: {{ $('Question webhook').first().json.body.question }}\nFAQ: {{ JSON.stringify($('Search FAQ').first().json.results ?? []) }}\n접수 건: {{ JSON.stringify($('Get ticket').first().json) }}",
+        "promptType": "define"
+      },
+      "typeVersion": 3.1,
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "name": "Answer"
+    },
+    {
+      "id": "ea1d1cc3-9a15-59fb-8e07-00fc4be855b8",
+      "position": [
+        1060,
+        -180
+      ],
+      "parameters": {
+        "queryParameters": {
+          "parameters": [
+            {
+              "value": "={{ $('Question webhook').first().json.body.user ?? '' }}",
+              "name": "requester"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "url": "=http://data-api:8800/tickets/{{ (($('Question webhook').first().json.body.question.match(/T-?\\d{4}/i) || ['NONE'])[0]).toUpperCase().replace(/^T(\\d)/, 'T-$1') }}"
+      },
+      "typeVersion": 4.2,
+      "type": "n8n-nodes-base.httpRequest",
+      "name": "Get ticket"
+    },
+    {
+      "id": "9105d3dd-2b36-5ef8-b173-4cdf63b7defd",
+      "position": [
+        840,
+        -60
+      ],
+      "parameters": {
+        "queryParameters": {
+          "parameters": [
+            {
+              "value": "={{ $('Question webhook').first().json.body.question }}",
+              "name": "q"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "options": {},
+        "url": "http://data-api:8800/faq"
+      },
+      "typeVersion": 4.2,
+      "type": "n8n-nodes-base.httpRequest",
+      "name": "Search FAQ"
+    },
+    {
+      "id": "50d20d89-fabe-5981-8c56-1aa26274f0bc",
+      "position": [
+        840,
+        320
+      ],
+      "parameters": {
+        "options": {
+          "responseCode": 400
+        },
+        "responseBody": "{ \"error\": \"question is required\" }",
+        "respondWith": "json"
+      },
+      "typeVersion": 1.1,
+      "type": "n8n-nodes-base.respondToWebhook",
+      "name": "Reject empty"
+    },
+    {
+      "id": "e1536a01-b710-5be0-bd2f-ec50f2a0f947",
+      "position": [
+        620,
+        180
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "operator": {
+                "singleValue": true,
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": "",
+              "leftValue": "={{ $json.body.question }}",
+              "id": "c1"
+            }
+          ],
+          "options": {
+            "version": 2,
+            "typeValidation": "loose",
+            "leftValue": "",
+            "caseSensitive": true
+          }
+        }
+      },
+      "typeVersion": 2.2,
+      "type": "n8n-nodes-base.if",
+      "name": "Has question?"
+    },
+    {
+      "id": "72d17c90-4061-5e3a-94b7-73d1a3b316a8",
+      "position": [
+        400,
+        300
+      ],
+      "webhookId": "96d838a1-ec7a-5112-9e84-45b40f292d82",
+      "parameters": {
+        "options": {},
+        "responseMode": "responseNode",
+        "path": "rel-v1",
+        "httpMethod": "POST"
+      },
+      "typeVersion": 2,
+      "type": "n8n-nodes-base.webhook",
+      "name": "Question webhook"
+    }
+  ],
+  "name": "74 IT helpdesk v1 (provided)"
+}
